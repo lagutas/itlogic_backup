@@ -1,22 +1,19 @@
 #!/usr/bin/perl
 
-use strict;
-use warnings;
+package itlogic_backup;
 use Logic::Tools;
 use DBI();
 
+use strict;
 
 my $path=shift;
 
 
+=pod
 if(!is_dir("/var/log/itlogic_backup"))
 {
     mkdir("/var/log/itlogic_backup");
 }
-
-my ($sec, $min, $hour, $day, $mon, $year) = ( localtime(time) )[0,1,2,3,4,5];
-
-my $logfile=sprintf("%s_%04d_%02d_%02d_%02d_%02d%s",'/var/log/itlogic_backup/backup_',$year+1900,$mon+1,$day,$hour,$min,'.log');
 
 my $tools=Logic::Tools->new(logfile         =>      $logfile,
                             config_file     =>      '/etc/itlogic_backup/backup.ini');
@@ -67,14 +64,44 @@ if ($@)
 $dbh->{mysql_auto_reconnect} = 1;
 
 
-
-
-
-
-
 $dbh->disconnect();
+
+=cut
+
+
+
+sub new
+{
+    my $invocant = shift;
+    my $class = ref($invocant) || $invocant;
+
+    my $self = { @_ };
+    bless $self, $class;
+    
+    return $self;
+}
+
+
+sub get_config
+{
+    my $self = shift;
+
+    my $logfile = $self->{'logfile'} || 'Syslog';
+
+    my $tools=Logic::Tools->new(config_file =>  $ENV{DEPLOY_PATH}.'/etc/itlogic_backup/backup.ini',
+                                logfile     =>  $logfile);
+
+    my %settings;
+    $settings{'get_fail2ban_settings'}=$tools->read_config( 'fail2ban', 'get_fail2ban_settings');
+
+    return \%settings;
+}
+
+
 sub is_dir
 {
+    my $self = shift;
+
     if ( -d $_[0] ) 
     {
         return 1;
