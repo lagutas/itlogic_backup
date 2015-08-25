@@ -20,7 +20,7 @@ my $command='sudo '.$path.'/install/test_install_script.pl'.
                             ' -script_cfg_name backup.ini'.
                             ' -src_script_cfg_dir '.$path.'/etc/itlogic_backup'.
                             ' -dst_script_cfg_dir /etc/itlogic_backup'.
-                            ' -test_dir '.$path.'/t'.
+                            ' -test_dir '.$path.'/usr/local/sbin/itlogic_backup/t'.
                             ' -emails '.$emails;
 $tools->logprint("info","exec $command");
 my $test_result=`$command`; 
