@@ -3,7 +3,7 @@ use warnings;
 
 my $path=shift;
 
-use Test::More tests => 3;
+use Test::More tests => 5;
 
 use_ok( 'Logic::Tools');                                                                                    #1
 use_ok( 'DBI');                                                                                             #2

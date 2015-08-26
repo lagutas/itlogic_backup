@@ -123,3 +123,5 @@ sub is_dir
         return 0; 
     }
 }
+
+1;
