@@ -103,7 +103,6 @@ sub get_config
     $settings{'db'}=$tools->read_config( 'main', 'db');
     $settings{'db_user'}=$tools->read_config( 'main', 'db_user');
     $settings{'db_password'}=$tools->read_config( 'main', 'db_password');
-    $settings{'db_password1'}=$tools->read_config( 'main', 'db_password1');
 
     return \%settings;
 }
