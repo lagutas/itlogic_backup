@@ -39,6 +39,8 @@ subtest 'is_dir work fine' => sub {
                                     $test_dir=$test_dir."/itlogic_backup/t/test_dir";
                                     is($backup->is_dir($test_dir),'0','if is dir not exist - ok');
 
+                                    print "!!! ".$test_dir."/itlogic_backup/t/test_dir !!!\n";
+
                                     mkdir($test_dir."/itlogic_backup/t/test_dir");
                                     is($backup->is_dir($test_dir),'1','if is dir exist - ok');
                                 };
