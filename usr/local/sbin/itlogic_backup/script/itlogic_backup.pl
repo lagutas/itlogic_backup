@@ -9,6 +9,13 @@ use strict;
 my $path=shift;
 
 
+#if is a unit test, script does't work
+if(!defined($ENV{TEST_IT}))
+{
+    my $backup = itlogic_backup->new();
+    my $settings=$backup->get_config();
+}
+
 =pod
 if(!is_dir("/var/log/itlogic_backup"))
 {
@@ -92,7 +99,10 @@ sub get_config
                                 logfile     =>  $logfile);
 
     my %settings;
-    $settings{'get_fail2ban_settings'}=$tools->read_config( 'fail2ban', 'get_fail2ban_settings');
+    $settings{'db_host'}=$tools->read_config( 'main', 'db_host');
+    $settings{'db'}=$tools->read_config( 'main', 'db');
+    $settings{'db_user'}=$tools->read_config( 'main', 'db_user');
+    $settings{'db_password'}=$tools->read_config( 'main', 'db_password');
 
     return \%settings;
 }
@@ -102,7 +112,9 @@ sub is_dir
 {
     my $self = shift;
 
-    if ( -d $_[0] ) 
+    my $dir = shift;
+
+    if ( -d $dir ) 
     {
         return 1;
     } 
