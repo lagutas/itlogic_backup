@@ -3,7 +3,7 @@ use warnings;
 
 my $path=shift;
 
-use Test::More tests => 6;
+use Test::More tests => 7;
 
 use_ok( 'Logic::Tools');                                                                                    #1
 use_ok( 'DBI');                                                                                             #2
@@ -35,15 +35,20 @@ subtest 'is_dir work fine' => sub {
                                     my $backup = itlogic_backup->new();
 
                                     my $test_dir=$path;
-                                    print "111 ".$test_dir." 111\n";
                                     $test_dir=~s/^(.+\/\d+.+sbin)\/.+$/$1/;
-                                    print "222 ".$test_dir." 222\n";
                                     $test_dir=$test_dir."/itlogic_backup/t/test_dir";
                                     is($backup->is_dir($test_dir),'0','if is dir not exist - ok');
 
-
-                                    print "!!! ".$test_dir." !!!\n";
-
                                     mkdir($test_dir);
                                     is($backup->is_dir($test_dir),'1','if is dir exist - ok');
+                                };
+
+#7
+subtest 'mysql if work' => sub  {
+                                    $ENV{DEPLOY_PATH} = $deploy_path;
+                                    my $backup = itlogic_backup->new();
+                                    my $settings=$backup->get_config();
+                                    my $dbh=$backup->mysql_connect($$settings{'db'},$$settings{'db_host'},$$settings{'db_user'},$$settings{'db_password'});
+                                    like( $dbh, qr/^DBI\:\:db=HASH.+/, 'mysql_connect ok - return hash' );
+                                    $dbh->disconnect();
                                 };
