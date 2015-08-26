@@ -35,7 +35,9 @@ subtest 'is_dir work fine' => sub {
                                     my $backup = itlogic_backup->new();
 
                                     my $test_dir=$path;
+                                    print "111 ".$test_dir." 111\n";
                                     $test_dir=~s/^(.+\/\d+.+sbin)\/.+$/$1/;
+                                    print "222 ".$test_dir." 222\n";
                                     $test_dir=$test_dir."/itlogic_backup/t/test_dir";
                                     is($backup->is_dir($test_dir),'0','if is dir not exist - ok');
 
