@@ -103,6 +103,7 @@ sub get_config
     $settings{'db'}=$tools->read_config( 'main', 'db');
     $settings{'db_user'}=$tools->read_config( 'main', 'db_user');
     $settings{'db_password'}=$tools->read_config( 'main', 'db_password');
+    $settings{'db_password1'}=$tools->read_config( 'main', 'db_password1');
 
     return \%settings;
 }
@@ -122,6 +123,29 @@ sub is_dir
     { 
         return 0; 
     }
+}
+
+sub mysql_connect
+{
+    my $self = shift;
+
+    my $db = shift;
+    my $db_host = shift;
+    my $db_user = shift;
+    my $db_password = shift;
+
+    my $dbh;
+    eval 
+    {
+        $dbh=DBI->connect("DBI:mysql:$db;host=$db_host",$db_user,$db_password);
+    };
+    if ($@) 
+    {
+        die "Error: не удается подключиться к базе данных $db $db_host $db_user $DBI::errstr\n"
+    }
+    $dbh->{mysql_auto_reconnect} = 1;
+
+    return $dbh;
 }
 
 1;
