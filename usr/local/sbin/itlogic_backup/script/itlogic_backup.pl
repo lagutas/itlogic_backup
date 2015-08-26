@@ -8,19 +8,44 @@ use strict;
 
 my $path=shift;
 
+################### querry for db ##############################
+my %query;
+$query{'get_backup_tasks'} = <<EOQ;
+SELECT
+    cdor.ctid,IFNULL(cs.`month`,0) as month, IFNULL(cs.`day`,0) as day, IFNULL(cdor.exlude_dir,0) as exlude_dir
+FROM
+    ctid_dump_options_rules cdor
+    JOIN ctid_schedule cs ON cdor.id = cs.ctid_dump_options_rules_id
+    JOIN servers s ON s.id = cdor.servers_id
+WHERE
+    s.domain='planetahost'
+    order by cdor.priority;
+EOQ
+
+################### querry for db end #########################
 
 #if is a unit test, script does't work
 if(!defined($ENV{TEST_IT}))
 {
     my $backup = itlogic_backup->new();
     my $settings=$backup->get_config();
+
+    my $tools=Logic::Tools->new(logfile => 'Syslog');
+    if(!($backup->is_dir("/var/log/itlogic_backup"))
+    {
+        $tools->logprint("info","create dir /var/log/itlogic_backup");
+        mkdir("/var/log/itlogic_backup");
+    }
+
+    my $backup = itlogic_backup->new();
+    my $settings=$backup->get_config();
+    my $dbh=$backup->mysql_connect($$settings{'db'},$$settings{'db_host'},$$settings{'db_user'},$$settings{'db_password'});
+
+    $dbh->disconnect();
 }
 
 =pod
-if(!is_dir("/var/log/itlogic_backup"))
-{
-    mkdir("/var/log/itlogic_backup");
-}
+
 
 my $tools=Logic::Tools->new(logfile         =>      $logfile,
                             config_file     =>      '/etc/itlogic_backup/backup.ini');

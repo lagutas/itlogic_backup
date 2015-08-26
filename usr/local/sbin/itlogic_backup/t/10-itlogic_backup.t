@@ -44,7 +44,7 @@ subtest 'is_dir work fine' => sub {
                                 };
 
 #7
-subtest 'mysql if work' => sub  {
+subtest 'mysql is work' => sub  {
                                     $ENV{DEPLOY_PATH} = $deploy_path;
                                     my $backup = itlogic_backup->new();
                                     my $settings=$backup->get_config();
