@@ -209,8 +209,8 @@ sub mysql_query
     my %string;
     while(my $ref = $sth->fetchrow_hashref())
     {   
-    	my $keys1 = keys %$ref;
-		$log->logprint("info","!!!!! keys1 - $keys1 !!!!!");
+    	my @keys1 = keys %$ref;
+		$log->logprint("info","!!!!! keys1 - @keys1 !!!!!");
         foreach my $key (keys %$ref)
         {
             
