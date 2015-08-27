@@ -57,8 +57,6 @@ subtest 'mysql is work' => sub  {
 
                                     my $tools=Logic::Tools->new(logfile     =>  $logfile);
 
-                                    print "111 $tools 111\n";
-
                                     my $data1=$backup->mysql_query($tools,$dbh,"select 'this is a test' as arg;");
                                     
                                     foreach(@$data1)
