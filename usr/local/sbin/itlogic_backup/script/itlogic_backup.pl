@@ -31,7 +31,7 @@ if(!defined($ENV{TEST_IT}))
     my $settings=$backup->get_config();
 
     my $tools=Logic::Tools->new(logfile => 'Syslog');
-    if(!($backup->is_dir("/var/log/itlogic_backup"))
+    if(!($backup->is_dir("/var/log/itlogic_backup")))
     {
         $tools->logprint("info","create dir /var/log/itlogic_backup");
         mkdir("/var/log/itlogic_backup");
