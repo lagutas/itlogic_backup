@@ -59,15 +59,28 @@ subtest 'mysql is work' => sub  {
 
                                     print "111 $tools 111\n";
 
-                                    my $data=$backup->mysql_query($tools,$dbh,"select 'this is a test' as arg1;");
+                                    my $data1=$backup->mysql_query($tools,$dbh,"select 'this is a test' as arg;");
                                     
-                                    foreach(@$data)
+                                    foreach(@$data1)
                                     {
-                                        print "!!! $_ !!!\n";
-                                        my @keys = keys %$_;
-                                        print "!!!!! @keys !!!!!\n";
-                                        is ($_->{'arg1'}, 'this is a test', "mysql_query with 1 arg is ok");
+                                        #print "!!! $_ !!!\n";
+                                        #my @keys = keys %$_;
+                                        #print "!!!!! @keys !!!!!\n";
+                                        is ($_->{'arg'}, 'this is a test', "mysql_query with 1 arg is ok");
                                     }
+
+                                    my $data2=$backup->mysql_query($tools,$dbh,"select 'this is a test 1' as arg1, 'this is a test 2' as arg2;");
+                                    
+                                    foreach(@$data2)
+                                    {
+                                        #print "!!! $_ !!!\n";
+                                        #my @keys = keys %$_;
+                                        #print "!!!!! @keys !!!!!\n";
+                                        is ($_->{'arg1'}, 'this is a test 1', "mysql_query with 2 arg is ok");
+                                        is ($_->{'arg2'}, 'this is a test 2', "mysql_query with 2 arg is ok");
+                                    }
+
+                                    
 
                                     $dbh->disconnect();
                                 };
