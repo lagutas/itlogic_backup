@@ -74,8 +74,8 @@ subtest 'mysql is work' => sub  {
                                     foreach(@$data2)
                                     {
                                         print "!!! $_ !!!\n";
-                                        #my @keys = keys %$_;
-                                        #print "!!!!! @keys !!!!!\n";
+                                        my @keys = keys %$_;
+                                        print "!!!!! @keys !!!!!\n";
                                         is ($_->{'arg1'}, 'this is a test 1', "mysql_query with 2 arg is ok");
                                         is ($_->{'arg2'}, 'this is a test 2', "mysql_query with 2 arg is ok");
                                     }
