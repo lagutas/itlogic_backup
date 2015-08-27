@@ -226,8 +226,8 @@ sub mysql_query
     foreach(@data)
                                     {
                                         $log->logprint("info","!!! $_ !!!");
-                                        my $keys = keys %$_;
-                                        $log->logprint("info","!!!!! $keys !!!!!");
+                                        my @keys = keys %$_;
+                                        $log->logprint("info","!!!!! @keys !!!!!");
                                         #is ($$_->{'arg1'}, 'this is a test', "mysql_query with 1 arg is ok");
                                     }
     $sth->finish();
