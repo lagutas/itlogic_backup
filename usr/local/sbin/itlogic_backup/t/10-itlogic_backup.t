@@ -66,7 +66,7 @@ subtest 'mysql is work' => sub  {
                                         print "!!! $_ !!!\n";
                                         my @keys = keys %$_;
                                         print "!!!!! @keys !!!!!\n";
-                                        is ($$_->{'arg1'}, 'this is a test', "mysql_query with 1 arg is ok");
+                                        is ($_->{'arg1'}, 'this is a test', "mysql_query with 1 arg is ok");
                                     }
 
                                     $dbh->disconnect();
