@@ -50,5 +50,24 @@ subtest 'mysql is work' => sub  {
                                     my $settings=$backup->get_config();
                                     my $dbh=$backup->mysql_connect($$settings{'db'},$$settings{'db_host'},$$settings{'db_user'},$$settings{'db_password'});
                                     like( $dbh, qr/^DBI\:\:db=HASH.+/, 'mysql_connect ok - return hash' );
+
+                                    my $logfile=$path;
+                                    $logfile=~s/^(.+\/\d+.+sbin)\/.+$/$1/;
+                                    $logfile=$logfile."/itlogic_backup/t/mysql_is_work.log";
+
+                                    my $tools=Logic::Tools->new(logfile     =>  $logfile);
+
+                                    print "111 $tools 111\n";
+
+                                    my $data=$fail2ban->mysql_query($tools,$dbh,"select 'this is a test' as arg1;");
+                                    
+                                    foreach(@$data)
+                                    {
+                                        print "!!! $_ !!!\n";
+                                        my $keys = keys %$_;
+                                        print "!!!!! $keys !!!!!\n";
+                                        #is ($$_->{'arg1'}, 'this is a test', "mysql_query with 1 arg is ok");
+                                    }
+
                                     $dbh->disconnect();
                                 };

@@ -172,4 +172,57 @@ sub mysql_connect
     return $dbh;
 }
 
+sub mysql_query
+{
+    my $self = shift;
+    my $log = shift;
+    my $dbh = shift;
+    my $query = shift;
+    my $execute_arg = shift;
+
+
+
+    my $sth=$dbh->prepare($query);
+
+    $log->logprint("info","try request $query");
+
+    my $arg_string;
+    eval 
+    {
+        #if set ref to execute_arg, args exist, serialise to string
+        if(defined($execute_arg))
+        {
+            $arg_string=join(",",@$execute_arg);
+            $sth->execute($execute_arg);    
+        }
+        else
+        {
+            $sth->execute();
+        }
+    };
+    if ($@) 
+    {
+        $log->logprint("error","error in $query ($arg_string) $DBI::errstr");
+    }
+
+    my @data;
+    my %string;
+    while(my $ref = $sth->fetchrow_hashref())
+    {   
+        foreach my $key (keys %$ref)
+        {
+            $$log{localtime().'.'.int(rand(1000000))}="$key";
+            
+            push(@data,\%$ref);
+            #push(@data,$string{'$key'}=$ref->{$key});
+        }
+
+        
+        
+    }
+    $sth->finish();
+
+    return \@data;
+}
+
 1;
