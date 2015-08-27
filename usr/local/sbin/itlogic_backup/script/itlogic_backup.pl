@@ -212,8 +212,8 @@ sub mysql_query
         foreach my $key (keys %$ref)
         {
             
-            $log->logprint("info","$ref{'arg1'}");
-            push(@data,\%$ref);
+            $log->logprint("info","$$ref{'arg1'}");
+            push(@data,$ref);
             #push(@data,$string{'$key'}=$ref->{$key});
         }
 
