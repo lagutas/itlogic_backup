@@ -221,7 +221,7 @@ sub mysql_query
         
     }
 
-    foreach(@$data)
+    foreach(@data)
                                     {
                                         $log->logprint("info","!!! $_ !!!");
                                         my $keys = keys %$_;
