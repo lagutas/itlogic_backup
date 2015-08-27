@@ -73,7 +73,5 @@ subtest 'mysql is work' => sub  {
                                         is ($_->{'arg2'}, 'this is a test 2', "mysql_query with 2 arg is ok");
                                     }
 
-                                    
-
                                     $dbh->disconnect();
                                 };
