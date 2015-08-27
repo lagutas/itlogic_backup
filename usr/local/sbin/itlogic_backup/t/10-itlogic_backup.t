@@ -59,7 +59,7 @@ subtest 'mysql is work' => sub  {
 
                                     print "111 $tools 111\n";
 
-                                    my $data=$fail2ban->mysql_query($tools,$dbh,"select 'this is a test' as arg1;");
+                                    my $data=$backup->mysql_query($tools,$dbh,"select 'this is a test' as arg1;");
                                     
                                     foreach(@$data)
                                     {
