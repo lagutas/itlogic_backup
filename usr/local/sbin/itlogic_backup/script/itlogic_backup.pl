@@ -211,8 +211,8 @@ sub mysql_query
     {   
         foreach my $key (keys %$ref)
         {
-            $$log{localtime().'.'.int(rand(1000000))}="$key";
             
+            $log->logprint("info","$ref{'arg1'}");
             push(@data,\%$ref);
             #push(@data,$string{'$key'}=$ref->{$key});
         }
