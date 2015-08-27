@@ -206,27 +206,12 @@ sub mysql_query
     }
 
     my @data;
-    my %string;
     while(my $ref = $sth->fetchrow_hashref())
-    {   
-        #foreach my $key (keys %$ref)
-        #{
-            
-            $log->logprint("info","$$ref{'arg1'}");
-            push(@data,$ref);
-            #push(@data,$string{'$key'}=$ref->{$key});
-        #}    
+    {       
+        $log->logprint("info","$$ref{'arg1'}");
+        push(@data,$ref);
     }
     $sth->finish();
-
-    #foreach(@data)
-    #                                {
-    #                                    $log->logprint("info","!!! $_ !!!");
-    #                                    my @keys = keys %$_;
-    #                                    $log->logprint("info","!!!!! @keys !!!!!");
-    #                                    #is ($$_->{'arg1'}, 'this is a test', "mysql_query with 1 arg is ok");
-    #                                }
-    
 
     return \@data;
 }
