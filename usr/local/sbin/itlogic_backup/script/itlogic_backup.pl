@@ -191,14 +191,14 @@ sub mysql_query
 
     $log->logprint("info","try request $query");
 
-    #my $arg_string;
+    my @arg_string;
     eval 
     {
         #if set ref to execute_arg, args exist, serialise to string
         if(defined($execute_arg))
         {
-            #$arg_string=join(",",@$execute_arg);
-            $sth->execute($execute_arg);    
+            @arg_string=split(";",$execute_arg);
+            $sth->execute(@arg_string);    
         }
         else
         {
@@ -207,7 +207,7 @@ sub mysql_query
     };
     if ($@) 
     {
-        $log->logprint("error","error in $query ($execute_arg) $DBI::errstr");
+        $log->logprint("error","error in $query (@arg_string) $DBI::errstr");
     }
 
     my @data;

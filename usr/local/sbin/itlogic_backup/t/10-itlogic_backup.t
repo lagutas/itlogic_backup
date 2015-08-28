@@ -73,7 +73,7 @@ subtest 'mysql is work' => sub  {
                                         is ($_->{'arg2'}, 'this is a test 2', "mysql_query with 2 arg is ok");
                                     }
 
-                                    my $data3=$backup->mysql_query($tools,$dbh,"select ? as arg1, ? as arg2;","");
+                                    my $data3=$backup->mysql_query($tools,$dbh,"select ? as arg1, ? as arg2;","this is a test 1; this is a test 2");
                                     
                                     foreach(@$data3)
                                     {
