@@ -40,7 +40,8 @@ if(!defined($ENV{TEST_IT}))
     my $backup = itlogic_backup->new();
     my $settings=$backup->get_config();
     my $dbh=$backup->mysql_connect($$settings{'db'},$$settings{'db_host'},$$settings{'db_user'},$$settings{'db_password'});
-    my $get_basckup_task=$backup->mysql_query($tools,$dbh,$query{'get_backup_tasks'});
+    chomp(my $hostname=`sudo /bin/hostname`);
+    my $get_basckup_task=$backup->mysql_query($tools,$dbh,$query{'get_backup_tasks'},$hostname);
     foreach(@$get_basckup_task)
     {
         $tools->logprint("info","ctid - $_->{'ctid'}, month - $_->{'month'}, day - $_->{'day'}, exclude_dir - $_->{'exclude_dir'}");
