@@ -77,8 +77,8 @@ subtest 'mysql is work' => sub  {
                                     
                                     foreach(@$data3)
                                     {
-                                        is ($_->{'arg1'}, 'this is a test 1', "mysql_query with 2 arg is ok");
-                                        is ($_->{'arg2'}, 'this is a test 2', "mysql_query with 2 arg is ok");
+                                        is ($_->{'arg1'}, 'this is a test 1', "mysql_query with 2 arg and binding is ok");
+                                        is ($_->{'arg2'}, 'this is a test 2', "mysql_query with 2 arg and binding is ok");
                                     }
 
                                     $dbh->disconnect();
