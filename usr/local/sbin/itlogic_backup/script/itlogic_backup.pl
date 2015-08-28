@@ -12,7 +12,7 @@ my $path=shift;
 my %query;
 $query{'get_backup_tasks'} = <<EOQ;
 SELECT
-    cdor.ctid,IFNULL(cs.`month`,0) as month, IFNULL(cs.`day`,0) as day, IFNULL(cdor.exlude_dir,0) as exlude_dir
+    cdor.ctid,IFNULL(cs.`month`,0) as month, IFNULL(cs.`day`,0) as day, IFNULL(cdor.exclude_dir,0) as exclude_dir
 FROM
     ctid_dump_options_rules cdor
     JOIN ctid_schedule cs ON cdor.id = cs.ctid_dump_options_rules_id
