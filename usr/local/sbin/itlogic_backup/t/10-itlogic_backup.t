@@ -55,7 +55,8 @@ subtest 'mysql is work' => sub  {
                                     $logfile=~s/^(.+\/\d+.+sbin)\/.+$/$1/;
                                     $logfile=$logfile."/itlogic_backup/t/mysql_is_work.log";
 
-                                    my $tools=Logic::Tools->new(logfile     =>  $logfile);
+                                    #my $tools=Logic::Tools->new(logfile     =>  $logfile);
+                                    my $tools=Logic::Tools->new();
 
                                     my $data1=$backup->mysql_query($tools,$dbh,"select 'this is a test' as arg;");
                                     
@@ -68,7 +69,14 @@ subtest 'mysql is work' => sub  {
                                     
                                     foreach(@$data2)
                                     {
-                                        my @keys = keys %$_;
+                                        is ($_->{'arg1'}, 'this is a test 1', "mysql_query with 2 arg is ok");
+                                        is ($_->{'arg2'}, 'this is a test 2', "mysql_query with 2 arg is ok");
+                                    }
+
+                                    my $data3=$backup->mysql_query($tools,$dbh,"select ? as arg1, ? as arg2;","");
+                                    
+                                    foreach(@$data3)
+                                    {
                                         is ($_->{'arg1'}, 'this is a test 1', "mysql_query with 2 arg is ok");
                                         is ($_->{'arg2'}, 'this is a test 2', "mysql_query with 2 arg is ok");
                                     }
