@@ -250,7 +250,7 @@ sub mysql_query
     };
     if ($@) 
     {
-        $log->logprint("error","error in $query (@arg_string) $DBI::errstr");
+        $log->logprint("error","error in $query ($execute_arg) $DBI::errstr");
     }
 
     my @data;
