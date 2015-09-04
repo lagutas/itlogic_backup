@@ -54,7 +54,8 @@ subtest 'mysql is work' => sub  {
                                     $logfile=~s/^(.+\/\d+.+sbin)\/.+$/$1/;
                                     $logfile=$logfile."/itlogic_backup/t/mysql_is_work.log";
 
-                                    my $tools=Logic::Tools->new(logfile => 'Syslog');
+                                    #my $tools=Logic::Tools->new(logfile => 'Syslog');
+                                    my $tools=Logic::Tools->new(logfile => $logfile);
 
                                     my $data1=$backup->mysql_query($tools,$dbh,"select 'this is a test' as arg;");
                                     
