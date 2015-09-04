@@ -81,5 +81,30 @@ subtest 'mysql is work' => sub  {
                                         is ($_->{'arg2'}, 'this is a test 2', "mysql_query with 2 arg and binding is ok");
                                     }
 
+                                    my $data3=$fail2ban->mysql_query(\%log,$dbh,"select ? as arg","this is a test");
+
+                                    foreach(@$data3)
+                                    {
+                                        is ($_->{'arg'}, 'this is a test', "mysql_query with 1 bind is ok");
+                                    }
+
+                                    my $data4=$fail2ban->mysql_query(\%log,$dbh,"select ? as arg1, ? as arg2","this is a test 1,this is a test 2");
+
+                                    foreach(@$data4)
+                                    {
+                                        is ($_->{'arg1'}, 'this is a test 1', "mysql_query with 2 bind is ok");
+                                        is ($_->{'arg2'}, 'this is a test 2', "mysql_query with 2 bind is ok");
+                                    }
+
+                                    my $data5=$fail2ban->mysql_query(\%log,$dbh,"select ? as arg1, ? as arg2, ? as arg3","this is a test 1,this is a test 2,this is a test 3");
+
+                                    foreach(@$data5)
+                                    {
+                                        is ($_->{'arg1'}, 'this is a test 1', "mysql_query with 3 bind is ok");
+                                        is ($_->{'arg2'}, 'this is a test 2', "mysql_query with 3 bind is ok");
+                                        is ($_->{'arg3'}, 'this is a test 3', "mysql_query with 3 bind is ok");
+                                    }
+
+
                                     $dbh->disconnect();
                                 };

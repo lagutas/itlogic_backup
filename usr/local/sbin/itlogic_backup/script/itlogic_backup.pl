@@ -186,20 +186,60 @@ sub mysql_query
     my $query = shift;
     my $execute_arg = shift;
 
-
-
     my $sth=$dbh->prepare($query);
 
-    $log->logprint("info","try request $query");
 
-    my @arg_string;
     eval 
     {
-        #if set ref to execute_arg, args exist, serialise to string
         if(defined($execute_arg))
         {
-            @arg_string=split(";",$execute_arg);
-            $sth->execute(@arg_string);    
+            my @args=split(",",$execute_arg);
+            #$$log{time()+10}="execute_arg - @args - ".$#args;
+            
+    
+
+            if($#args==0)
+            {
+                $$log{time()+100}="execute($args[0])";
+                $sth->execute($args[0]);
+            }
+            elsif($#args==1)
+            {
+                $sth->execute($args[0],$args[1]);
+            }
+            elsif($#args==2)
+            {
+                $sth->execute($args[0],$args[1],$args[2]);
+            }
+            elsif($#args==3)
+            {
+                $sth->execute($args[0],$args[1],$args[2],$args[3]);
+            }
+            elsif($#args==4)
+            {
+                $sth->execute($args[0],$args[1],$args[2],$args[3],$args[4]);
+            }
+            elsif($#args==5)
+            {
+                $sth->execute($args[0],$args[1],$args[2],$args[3],$args[4],$args[5]);
+            }
+            elsif($#args==6)
+            {
+                $sth->execute($args[0],$args[1],$args[2],$args[3],$args[4],$args[5],$args[6]);
+            }
+            elsif($#args==7)
+            {
+                $sth->execute($args[0],$args[1],$args[2],$args[3],$args[4],$args[5],$args[6],$args[7]);
+            }
+            elsif($#args==8)
+            {
+                $sth->execute($args[0],$args[1],$args[2],$args[3],$args[4],$args[5],$args[6],$args[7],$args[8]);
+            }
+            elsif($#args==9)
+            {
+                $sth->execute($args[0],$args[1],$args[2],$args[3],$args[4],$args[5],$args[6],$args[7],$args[8],$args[9]);
+            }
+            
         }
         else
         {
@@ -208,15 +248,15 @@ sub mysql_query
     };
     if ($@) 
     {
-        $log->logprint("error","error in $query (@arg_string) $DBI::errstr");
+        $$log{time()+100}="error:error in $query ($execute_arg) $DBI::errstr";
     }
 
     my @data;
     while(my $ref = $sth->fetchrow_hashref())
-    {       
-        $log->logprint("info","$$ref{'arg1'}");
-        push(@data,$ref);
+    {   
+        push(@data,\%$ref);
     }
+
     $sth->finish();
 
     return \@data;
