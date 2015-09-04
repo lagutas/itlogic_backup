@@ -186,16 +186,19 @@ sub mysql_query
     my $query = shift;
     my $execute_arg = shift;
 
+
+
     my $sth=$dbh->prepare($query);
 
+    $log->logprint("info","try request $query");
 
     eval 
     {
+        #if set ref to execute_arg, args exist, serialise to string
         if(defined($execute_arg))
         {
             my @args=split(",",$execute_arg);
             #$$log{time()+10}="execute_arg - @args - ".$#args;
-            
     
 
             if($#args==0)
@@ -239,7 +242,6 @@ sub mysql_query
             {
                 $sth->execute($args[0],$args[1],$args[2],$args[3],$args[4],$args[5],$args[6],$args[7],$args[8],$args[9]);
             }
-            
         }
         else
         {
@@ -248,15 +250,15 @@ sub mysql_query
     };
     if ($@) 
     {
-        $$log{time()+100}="error:error in $query ($execute_arg) $DBI::errstr";
+        $log->logprint("error","error in $query (@arg_string) $DBI::errstr");
     }
 
     my @data;
     while(my $ref = $sth->fetchrow_hashref())
-    {   
-        push(@data,\%$ref);
+    {       
+        $log->logprint("info","$$ref{'arg1'}");
+        push(@data,$ref);
     }
-
     $sth->finish();
 
     return \@data;

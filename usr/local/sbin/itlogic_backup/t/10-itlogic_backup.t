@@ -45,34 +45,25 @@ subtest 'is_dir work fine' => sub {
 #7
 subtest 'mysql is work' => sub  {
                                     $ENV{DEPLOY_PATH} = $deploy_path;
-                                    my $fork_path=$path;
-                                    $fork_path=~s/^(.+\/\d+.+project)\/.+$/$1/;
-                                    $fork_path=$fork_path."/fork_proc/script/";
-
-                                    my $logfile=$path;
-                                    $logfile=~s/^(.+\/\d+.+project)\/.+$/$1/;
-                                    $logfile=$logfile."/fail2ban/t/";
-
-                                    my $fail2ban = Fail2ban->new(fork_path  => $fork_path,
-                                                                 logfile    => $logfile."mysql_test.log");
-                                    my $settings=$fail2ban->get_config();
-                                    my $dbh=$fail2ban->mysql_connect($$settings{'db'},$$settings{'db_host'},$$settings{'db_user'},$$settings{'db_password'});
-
-                                    my %log;
-                                    tie(%log,'IPC::Shareable','log',{   create     => 'yes',
-                                                                        destroy    => 'yes',
-                                                                        exclusive  => 0,
-                                                                        mode       => '0644'}) or die "Can't tie \%log to shared memory: $!";
+                                    my $backup = itlogic_backup->new();
+                                    my $settings=$backup->get_config();
+                                    my $dbh=$backup->mysql_connect($$settings{'db'},$$settings{'db_host'},$$settings{'db_user'},$$settings{'db_password'});
                                     like( $dbh, qr/^DBI\:\:db=HASH.+/, 'mysql_connect ok - return hash' );
 
-                                    my $data1=$fail2ban->mysql_query(\%log,$dbh,"select 'this is a test' as arg;");
+                                    my $logfile=$path;
+                                    $logfile=~s/^(.+\/\d+.+sbin)\/.+$/$1/;
+                                    $logfile=$logfile."/itlogic_backup/t/mysql_is_work.log";
+
+                                    my $tools=Logic::Tools->new(logfile => 'Syslog');
+
+                                    my $data1=$backup->mysql_query($tools,$dbh,"select 'this is a test' as arg;");
                                     
                                     foreach(@$data1)
                                     {
                                         is ($_->{'arg'}, 'this is a test', "mysql_query with 1 arg is ok");
                                     }
 
-                                    my $data2=$fail2ban->mysql_query(\%log,$dbh,"select 'this is a test 1' as arg1, 'this is a test 2' as arg2;");
+                                    my $data2=$backup->mysql_query($tools,$dbh,"select 'this is a test 1' as arg1, 'this is a test 2' as arg2;");
                                     
                                     foreach(@$data2)
                                     {
@@ -80,24 +71,32 @@ subtest 'mysql is work' => sub  {
                                         is ($_->{'arg2'}, 'this is a test 2', "mysql_query with 2 arg is ok");
                                     }
 
-                                    my $data3=$fail2ban->mysql_query(\%log,$dbh,"select ? as arg","this is a test");
-
+                                    my $data3=$backup->mysql_query($tools,$dbh,"select ? as arg1, ? as arg2;","this is a test 1;this is a test 2");
+                                    
                                     foreach(@$data3)
+                                    {
+                                        is ($_->{'arg1'}, 'this is a test 1', "mysql_query with 2 arg and binding is ok");
+                                        is ($_->{'arg2'}, 'this is a test 2', "mysql_query with 2 arg and binding is ok");
+                                    }
+
+                                    my $data4=$fail2ban->mysql_query($tools,$dbh,"select ? as arg","this is a test");
+
+                                    foreach(@$data4)
                                     {
                                         is ($_->{'arg'}, 'this is a test', "mysql_query with 1 bind is ok");
                                     }
 
-                                    my $data4=$fail2ban->mysql_query(\%log,$dbh,"select ? as arg1, ? as arg2","this is a test 1,this is a test 2");
+                                    my $data5=$fail2ban->mysql_query($tools,$dbh,"select ? as arg1, ? as arg2","this is a test 1,this is a test 2");
 
-                                    foreach(@$data4)
+                                    foreach(@$data5)
                                     {
                                         is ($_->{'arg1'}, 'this is a test 1', "mysql_query with 2 bind is ok");
                                         is ($_->{'arg2'}, 'this is a test 2', "mysql_query with 2 bind is ok");
                                     }
 
-                                    my $data5=$fail2ban->mysql_query(\%log,$dbh,"select ? as arg1, ? as arg2, ? as arg3","this is a test 1,this is a test 2,this is a test 3");
+                                    my $data6=$fail2ban->mysql_query($tools,$dbh,"select ? as arg1, ? as arg2, ? as arg3","this is a test 1,this is a test 2,this is a test 3");
 
-                                    foreach(@$data5)
+                                    foreach(@$data6)
                                     {
                                         is ($_->{'arg1'}, 'this is a test 1', "mysql_query with 3 bind is ok");
                                         is ($_->{'arg2'}, 'this is a test 2', "mysql_query with 3 bind is ok");
@@ -105,10 +104,4 @@ subtest 'mysql is work' => sub  {
                                     }
 
                                     $dbh->disconnect();
-
-                                    my $result = ae_recv{
-                                                            $fail2ban->run_logger(ae_send);
-                                                        } 
-                                                        soft_timeout => 2;
-                                    (tied %log)->remove;
                                 };
