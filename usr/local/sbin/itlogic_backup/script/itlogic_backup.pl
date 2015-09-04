@@ -198,7 +198,7 @@ sub mysql_query
         if(defined($execute_arg))
         {
             my @args=split(",",$execute_arg);
-            #$$log{time()+10}="execute_arg - @args - ".$#args;
+            $log->logprint("info","execute_arg - @args - ".$#args);
     
 
             if($#args==0)
