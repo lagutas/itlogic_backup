@@ -1,5 +1,4 @@
 use strict;
-use warnings;
 
 my $path=shift;
 
@@ -46,39 +45,39 @@ subtest 'is_dir work fine' => sub {
 #7
 subtest 'mysql is work' => sub  {
                                     $ENV{DEPLOY_PATH} = $deploy_path;
-                                    my $backup = itlogic_backup->new();
-                                    my $settings=$backup->get_config();
-                                    my $dbh=$backup->mysql_connect($$settings{'db'},$$settings{'db_host'},$$settings{'db_user'},$$settings{'db_password'});
-                                    like( $dbh, qr/^DBI\:\:db=HASH.+/, 'mysql_connect ok - return hash' );
+                                    my $fork_path=$path;
+                                    $fork_path=~s/^(.+\/\d+.+project)\/.+$/$1/;
+                                    $fork_path=$fork_path."/fork_proc/script/";
 
                                     my $logfile=$path;
-                                    $logfile=~s/^(.+\/\d+.+sbin)\/.+$/$1/;
-                                    $logfile=$logfile."/itlogic_backup/t/mysql_is_work.log";
+                                    $logfile=~s/^(.+\/\d+.+project)\/.+$/$1/;
+                                    $logfile=$logfile."/fail2ban/t/";
 
-                                    #my $tools=Logic::Tools->new(logfile     =>  $logfile);
-                                    my $tools=Logic::Tools->new(logfile => 'Syslog');
+                                    my $fail2ban = Fail2ban->new(fork_path  => $fork_path,
+                                                                 logfile    => $logfile."mysql_test.log");
+                                    my $settings=$fail2ban->get_config();
+                                    my $dbh=$fail2ban->mysql_connect($$settings{'db'},$$settings{'db_host'},$$settings{'db_user'},$$settings{'db_password'});
 
-                                    my $data1=$backup->mysql_query($tools,$dbh,"select 'this is a test' as arg;");
+                                    my %log;
+                                    tie(%log,'IPC::Shareable','log',{   create     => 'yes',
+                                                                        destroy    => 'yes',
+                                                                        exclusive  => 0,
+                                                                        mode       => '0644'}) or die "Can't tie \%log to shared memory: $!";
+                                    like( $dbh, qr/^DBI\:\:db=HASH.+/, 'mysql_connect ok - return hash' );
+
+                                    my $data1=$fail2ban->mysql_query(\%log,$dbh,"select 'this is a test' as arg;");
                                     
                                     foreach(@$data1)
                                     {
                                         is ($_->{'arg'}, 'this is a test', "mysql_query with 1 arg is ok");
                                     }
 
-                                    my $data2=$backup->mysql_query($tools,$dbh,"select 'this is a test 1' as arg1, 'this is a test 2' as arg2;");
+                                    my $data2=$fail2ban->mysql_query(\%log,$dbh,"select 'this is a test 1' as arg1, 'this is a test 2' as arg2;");
                                     
                                     foreach(@$data2)
                                     {
                                         is ($_->{'arg1'}, 'this is a test 1', "mysql_query with 2 arg is ok");
                                         is ($_->{'arg2'}, 'this is a test 2', "mysql_query with 2 arg is ok");
-                                    }
-
-                                    my $data3=$backup->mysql_query($tools,$dbh,"select ? as arg1, ? as arg2;","this is a test 1;this is a test 2");
-                                    
-                                    foreach(@$data3)
-                                    {
-                                        is ($_->{'arg1'}, 'this is a test 1', "mysql_query with 2 arg and binding is ok");
-                                        is ($_->{'arg2'}, 'this is a test 2', "mysql_query with 2 arg and binding is ok");
                                     }
 
                                     my $data3=$fail2ban->mysql_query(\%log,$dbh,"select ? as arg","this is a test");
@@ -105,6 +104,11 @@ subtest 'mysql is work' => sub  {
                                         is ($_->{'arg3'}, 'this is a test 3', "mysql_query with 3 bind is ok");
                                     }
 
-
                                     $dbh->disconnect();
+
+                                    my $result = ae_recv{
+                                                            $fail2ban->run_logger(ae_send);
+                                                        } 
+                                                        soft_timeout => 2;
+                                    (tied %log)->remove;
                                 };
