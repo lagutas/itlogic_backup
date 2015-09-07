@@ -203,7 +203,6 @@ sub mysql_query
 
             if($#args==0)
             {
-                $$log{time()+100}="execute($args[0])";
                 $sth->execute($args[0]);
             }
             elsif($#args==1)
